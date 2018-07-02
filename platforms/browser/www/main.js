@@ -60,8 +60,8 @@ var mainState = {
             if (this.bird.y < 0)
                 this.bird.y = 0;
 
-            if (this.bird.y > 450) {
-                this.bird.y = 450;
+            if (this.bird.y > height) {
+                this.bird.y = height;
                 this.bird.body.gravity.y = -300;
                 game.add.tween(this.bird).to({angle: -20}, 100).start();
             } else {
