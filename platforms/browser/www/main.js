@@ -3,23 +3,30 @@ var mainState = {
     preload: function () {
         // This function will be executed at the beginning
         // That's where we load the images and sounds
-        game.load.image('bird', 'assets/reshet.svg');
-        game.load.image('pipe', 'assets/pipe.png');
+        game.load.image('sky', 'assets/sky.png');
+        game.load.spritesheet('bird', 'assets/hero.png',182,175,14);//56
+        game.load.image('pipe1', 'assets/pipe.png');
+        game.load.image('pipe2', 'assets/bird.png');
 
-        game.load.audio('jump', 'assets/jump.wav');
+        game.load.audio('jump', 'assets/fly.mp3');
+        game.load.audio('gameOver', 'assets/game_over.mp3');
 
     },
 
     create: function () {
-        // Change the background color of the game to blue
-        game.stage.backgroundColor = '#71c5cf';
-
         // Set the physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        // Display the bird at the position x=100 and y=245
-        this.bird = game.add.sprite(100, 245, 'bird');
-        this.bird.scale.setTo(0.2,0.2);
+        //  A simple background for our game
+        this.sky =game.add.sprite(0, 0, 'sky');
+        this.sky.height = game.height;
+        this.sky.width = game.width;
+
+            // Display the bird at the position x=100 and y=245
+        this.bird = game.add.sprite(100, 245, 'bird',3);
+        this.bird.scale.set(0.3);
+        anim = this.bird.animations.add('walk');
+        anim.play(50,true);
         // Add physics to the bird
         // Needed for: movements, gravity, collisions, etc.
         game.physics.arcade.enable(this.bird);
@@ -38,17 +45,36 @@ var mainState = {
         game.input.onDown.add(this.jump, this);
 
         this.jumpSound = game.add.audio('jump');
+        this.gameOverSound = game.add.audio('gameOver');
 
         spaceKey.onDown.add(this.jump, this);
 
-        this.timer = game.time.events.loop(1500, this.addRowOfPipes, this);
+        this.timer = game.time.events.loop(2500, this.addRowOfPipes, this);
 
         this.score = 0;
+        this.bestScore = localStorage ? localStorage.getItem('bestScore') : "best score: 0";
+
         this.labelScore = game.add.text(20, 20, "0",
-            {font: "30px Arial", fill: "#ffffff"});
+            {font: "25px Arial", fill: "#ffffff"});
+
+        this.bestScore = game.add.text(20, height-50, this.bestScore,
+            {font: "25px Arial", fill: "red"});
 
         // Move the anchor to the left and downward
         this.bird.anchor.setTo(-0.2, 0.5);
+
+        // Create a label to use as a button
+        this.pause_label = game.add.text(width -100,  height -50, 'Pause', { font: '24px Arial', fill: '#fff' });
+        this.pause_label.inputEnabled = true;
+        this.pause_label.events.onInputUp.add(function () {
+            // When the paus button is pressed, we pause the game
+            game.paused = true;
+            this.pause_label.setText('Resume Game');
+        }.bind(this));
+
+        // Add a input listener that can help us return from being paused
+        spaceKey.onDown.add(this.unpause, this);
+        game.input.onDown.add(this.unpause, this);
     },
 
     update: function () {
@@ -60,16 +86,15 @@ var mainState = {
             if (this.bird.y < 0)
                 this.bird.y = 0;
 
-            if (this.bird.y > height) {
-                this.bird.y = height;
-                this.bird.body.gravity.y = -300;
+            if (this.bird.y > height-40) {
+                this.bird.y = height-40;
                 game.add.tween(this.bird).to({angle: -20}, 100).start();
-            } else {
+            } /*else {
                 this.bird.body.gravity.y = 1000;
-            }
+            }*/
         }else{
             this.hitPipe();
-            if (this.bird.y < 0 || this.bird.y > 490)
+            if (this.bird.y < 0 || this.bird.y > height)
                 this.restartGame();
         }
 
@@ -83,7 +108,7 @@ var mainState = {
     hitPipe: function() {
         // If the bird has already hit a pipe, do nothing
         // It means the bird is already falling off the screen
-        if (this.bird.alive == false)
+        if (this.bird.alive === false)
             return;
 
         // Set the alive property of the bird to false
@@ -92,10 +117,19 @@ var mainState = {
         // Prevent new pipes from appearing
         game.time.events.remove(this.timer);
 
+        this.gameOverSound.play();
+
+        localStorage.setItem('bestScore', "best score: " + this.score);
+
         // Go through all the pipes, and stop their movement
         this.pipes.forEach(function(p){
             p.body.velocity.x = 0;
         }, this);
+    },
+
+    unpause: function(){
+        game.paused = false;
+        this.pause_label.setText('Pause');
     },
 
     // Make the bird jump
@@ -120,7 +154,7 @@ var mainState = {
 
     addOnePipe: function (x, y) {
         // Create a pipe at the position x and y
-        var pipe = game.add.sprite(x, y, 'pipe');
+        var pipe = game.add.sprite(x, y, 'pipe' + game.rnd.integerInRange(1, 2));
 
         // Add the pipe to our previously created group
         this.pipes.add(pipe);
@@ -129,13 +163,11 @@ var mainState = {
         game.physics.arcade.enable(pipe);
 
         // Add velocity to the pipe to make it move left
-        pipe.body.velocity.x = -200;
+        pipe.body.velocity.x = -250;
 
         // Automatically kill the pipe when it's no longer visible
         pipe.checkWorldBounds = true;
         pipe.outOfBoundsKill = true;
-
-
 
         this.labelScore.text = this.score;
     },
@@ -145,19 +177,22 @@ var mainState = {
         // This will be the hole position
         this.score +=  1;
 
-        var hole = Math.floor(Math.random() * 5) + 1;
+        var amount = Math.floor(height/ 50) +1;
 
-        var amount = Math.floor(height/ 8);
+        var hole = game.rnd.integerInRange(1, amount-4);
+
+
         // Add the 6 pipes
         // With one big hole at position 'hole' and 'hole + 1'
         for (var i = 0; i < amount; i++)
-            if (i != hole && i != hole + 1)
-                this.addOnePipe(width, i * 60 + 10);
+            if (i != hole && i != hole + 1 && i != hole + 2)
+                this.addOnePipe(width, i * 50);
     },
 };
 
-var width = window.innerWidth * window.devicePixelRatio;
-var height = window.innerHeight * window.devicePixelRatio;
+var width = window.innerWidth;
+var height = window.innerHeight;
+console.log('size' ,width,height);
 
 // Initialize Phaser, and create a 400px by 490px game
 var game = new Phaser.Game(width,height );
