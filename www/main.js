@@ -23,7 +23,7 @@ var mainState = {
         this.sky.width = game.width;
 
             // Display the bird at the position x=100 and y=245
-        this.bird = game.add.sprite(100, 245, 'bird',3);
+        this.bird = game.add.sprite(20, 245, 'bird',3);
         this.bird.scale.set(0.3);
         anim = this.bird.animations.add('walk');
         anim.play(50,true);
