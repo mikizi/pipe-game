@@ -108,14 +108,15 @@ var mainState = {
 
         startGame: function () {
             this.initGame(game);
-            game.add.tween(button).to({alpha: 0}, 200, Phaser.Easing.Linear.None, true);
-            //button.destroy();
+            //game.add.tween(button).to({alpha: 0}, 200, Phaser.Easing.Linear.None, true);
+            button.destroy();
             this.gameStarted = true;
             this.startGameSound = game.add.audio('gameStart');
             this.startGameSound.play();
         },
 
         initGame: function () {
+
             var level = this.setDifficulty();
 
             this.createBird(game);
