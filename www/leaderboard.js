@@ -6,12 +6,10 @@ var scoreBoardService = new App42ScoreBoard();
 
 
 var gameName = "jumpi-test1",
-    userName = "aba",
     result,
     max = 5;
 
-saveUserScore = function(score)
-{
+saveUserScore = function (userName, score) {
     scoreBoardService.saveUserScore(gameName, userName, score, {
         success: function () {
             updateScoreBoard();
@@ -21,7 +19,7 @@ saveUserScore = function(score)
     });
 };
 
-updateScoreBoard = function() {
+updateScoreBoard = function () {
     scoreBoardService.getTopNRankers(gameName, max, {
         success: function (object) {
             var game = JSON.parse(object);
@@ -41,4 +39,17 @@ updateScoreBoard = function() {
         }, error: function (error) {
         }
     });
+};
+
+insertUser = function () {
+    var clear = setInterval(function () {
+        score = 5;
+        var x = document.getElementById("usrname");
+        if (x.value.length === 3) {
+            saveUserScore(x.value, score);
+            clearInterval(clear);
+            document.getElementById("inputWrp").style.display = 'none';
+
+        }
+    }, 100)
 };

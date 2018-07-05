@@ -54,6 +54,10 @@ input#usrname {
     letter-spacing: 6px;
 }
 
+input:focus {
+    outline-width: 0;
+}
+
 /*anim*/
 .element-animation{
     animation: animationFrames linear 1s;
