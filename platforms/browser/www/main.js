@@ -1,6 +1,7 @@
 // Create our 'main' state that will contain the game
 var mainState = {
         preload: function () {
+            updateScoreBoard();
             // This function will be executed at the beginning
             // That's where we load the images and sounds
             game.load.image('sky', 'assets/sky.png');
@@ -55,12 +56,13 @@ var mainState = {
             this.bestScore = localStorage && localStorage.getItem('bestScore') ? localStorage.getItem('bestScore') : "0";
 
             var text = "best score: " + this.bestScore;
-            game.add.text(20, height - 50, text, {font: "25px Arial", fill: "red"});
+            game.add.text(20, height - 50, text, {font: "15px arcade", fill: "red"});
 
             // Create a label to use as a button
             button = game.add.button(width / 2, height / 2, 'button', this.actionOnClick, this);
             button.anchor.set(0.5);
             button.scale.setTo(0.5);
+
         },
 
         update: function () {
@@ -108,6 +110,7 @@ var mainState = {
 
         startGame: function () {
             this.initGame(game);
+            document.getElementById("leaderboard").style.display = "none";
             //game.add.tween(button).to({alpha: 0}, 200, Phaser.Easing.Linear.None, true);
             button.destroy();
             this.gameStarted = true;
@@ -123,12 +126,12 @@ var mainState = {
             this.timer = game.time.events.loop(level.speed, this.addRowOfPipes, this);
 
             // Create a label to use as a button
-            this.pause_label = game.add.text(width - 100, height - 50, 'Pause', {font: '24px Arial', fill: '#fff'});
+            this.pause_label = game.add.text(width - 100, 20, 'Pause', {font: '15px arcade', fill: '#fff'});
             this.pause_label.inputEnabled = true;
             this.pause_label.events.onInputUp.add(function () {
                 // When the paus button is pressed, we pause the game
                 game.paused = true;
-                this.pause_label.setText('Resume Game');
+                this.pause_label.setText('Resume');
             }.bind(this));
 
             // Create an empty group
@@ -141,7 +144,7 @@ var mainState = {
 
             this.score = 0;
             this.labelScore = game.add.text(20, 20, "0",
-                {font: "25px Arial", fill: "#ffffff"});
+                {font: "15px arcade", fill: "#ffffff"});
 
             game.input.onDown.add(this.jump, this);
             spaceKey.onDown.add(this.jump, this);
@@ -233,8 +236,12 @@ var mainState = {
         // Restart the game
         restartGame: function () {
             this.gameStarted = false;
+            document.getElementById("leaderboard").style.display = "block";
             // Start the 'main' state, which restarts the game
             game.state.start('main');
+
+            saveUserScore(this.score);
+
         },
 
         addOnePipe: function (x, y) {
@@ -278,27 +285,24 @@ var mainState = {
     }
 ;
 
-
-console.log('size', width, height);
-
 var clear = setInterval(function () {
     initOnLandscape();
 }, 200);
 
 var game = [];
-var height,width;
+var height, width;
 var init = false;
 
 initOnLandscape();
 
-function initOnLandscape(){
-     width = document.body.offsetWidth;
-     height = document.body.offsetHeight;
+function initOnLandscape() {
+    width = document.body.offsetWidth;
+    height = document.body.offsetHeight;
 
     if (height > width) {
         document.getElementById("turn").style.display = "none";
         clearInterval(clear);
-        if(init){
+        if (init) {
             return;
         }
         init = true;
@@ -315,4 +319,3 @@ function initOnLandscape(){
         document.getElementById("turn").style.display = "block";
     }
 }
-

@@ -4,31 +4,27 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="viewport" content="user-scalable=0, initial-scale=1, minimum-scale=1, maximum-scale=1, width=device-width, minimal-ui=1">
+    <link href="style.css" rel="stylesheet" type="text/css"/>
     <title> Flappy Bird Clone </title>
-    <style>
-        body{
-            margin:0px;
-            padding:0px;
-        }
-        #turn{
-            width:100%;
-            height:100%;
-            position:fixed;
-            top:0px;
-            left:0px;
-            background-color:white;
-            background-image:url('assets/playportrait.png');
-            background-repeat:no-repeat;
-            background-position: center center;
-            display:none;
-        }
-    </style>
+
 </head>
 
 <body style="margin: 0">
+<div id = "leaderboard">
+    <div id="tblWrp"></div>
+    <div id = "inputWrp" >
+        <label for="usrname" > Your Name:</label>
+        <input type="text" class="element-animation" id="usrname" name="usrname" maxlength="3"/>
+    </div>
+</div>
 <div id = "turn"></div>
+
 <script type="text/javascript" src="phaser.min.js"></script>
+<script type="text/javascript" src="App42-all-3.1.min.js" ></script>
+
+<script type="text/javascript" src="leaderboard.js"></script>
 <script type="text/javascript" src="main.js"></script>
+
 <!--<script type="text/javascript" src="cordova.js"></script>-->
 </body>
 </html>
