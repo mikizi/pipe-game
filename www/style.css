@@ -26,6 +26,11 @@ body{
     position: absolute;
     width: 100%;
     top: 30px;
+    display: none;
+}
+
+#inputWrp{
+    display:none;
 }
 
 table{
