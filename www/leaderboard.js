@@ -9,7 +9,7 @@ var gameName = "jumpi-test-2",
     result,
     max = 5;
 
-    window.saveUser = false;
+window.saveUser = false;
 
 saveUserScore = function (userName, score) {
     if(score) {
@@ -78,5 +78,5 @@ insertUser = function (score) {
 };
 
 document.addEventListener("DOMContentLoaded", function() {
-    updateScoreBoard();
+    //updateScoreBoard();
 });
