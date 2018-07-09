@@ -46,6 +46,7 @@ updateScoreBoard = function () {
             document.getElementById("tblWrp").innerHTML = "<table width = \"100%\"><tr><td class='headTbl' colspan = \"2\"><strong>TOP SCORES</strong></td>" + dataTable + "</table>";
             document.getElementById("leaderboard").style.display = 'block';
         }, error: function (error) {
+            alert(error.toString());
         }
     });
 };
