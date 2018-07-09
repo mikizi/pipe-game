@@ -24,8 +24,8 @@ saveUserScore = function (userName, score) {
 };
 
 updateScoreBoard = function () {
-
-    scoreBoardService.getTopNRankers(gameName, max, {
+    console.log(gameName, max);
+    scoreBoardService.getTopNRankings(gameName, max, {
         success: function (object) {
             var game = JSON.parse(object);
             result = game.app42.response.games.game;
@@ -46,7 +46,11 @@ updateScoreBoard = function () {
             document.getElementById("tblWrp").innerHTML = "<table width = \"100%\"><tr><td class='headTbl' colspan = \"2\"><strong>TOP SCORES</strong></td>" + dataTable + "</table>";
             document.getElementById("leaderboard").style.display = 'block';
         }, error: function (error) {
-            alert(error.toString());
+            debugger;
+
+            console.log('error :', this);
+            //alert('error :' + error.toString());
+
         }
     });
 };
@@ -72,3 +76,7 @@ insertUser = function (score) {
         }
     }, 100, score);
 };
+
+document.addEventListener("DOMContentLoaded", function() {
+    updateScoreBoard();
+});

@@ -2,8 +2,6 @@
 var mainState = {
     preload: function () {
         window.saveUser = false;
-
-        updateScoreBoard();
         // This function will be executed at the beginning
         // That's where we load the images and sounds
         game.load.image('sky', 'assets/sky.png');
@@ -358,4 +356,5 @@ function initOnLandscape() {
         document.getElementById("turn").style.display = "block";
     }
 }
+
 
